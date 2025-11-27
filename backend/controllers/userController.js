@@ -15,4 +15,37 @@ export async function getAllUsers(req, res) {
   } catch(error) {
     return res.status(500).json({ message: `Server error: ${error.message}`});
   }
-}
+};
+
+//CREATE & SIGN UP USERS
+export async function createUser(req, res) {
+
+  const { name, email, password } = req.body;
+  let existingUser = ''
+
+  try {
+
+    existingUser = await User.findOne({ email });
+
+    if(existingUser) {
+      return res.status(400).json({ message: `User ${email} already exists!  Login instead...` });
+    };
+
+    const user = User({
+      name,
+      email,
+      password,
+    });
+
+    try {
+
+      await user.save();
+
+    } catch(error) {
+      return res.status(500).json({ message: `Server error: ${error.message}`});
+    }
+     return res.status(201).json({ user });
+  } catch(error) {
+    return res.status(500).json({ message: `Server error: ${error.message}`});
+  }
+};
