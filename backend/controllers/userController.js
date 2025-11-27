@@ -1,4 +1,5 @@
 import User from "../model/user.js";
+import bcrypt from 'bcryptjs';
 
 //GET ALL USERS
 export async function getAllUsers(req, res) {
@@ -31,10 +32,13 @@ export async function createUser(req, res) {
       return res.status(400).json({ message: `User ${email} already exists!  Login instead...` });
     };
 
+    //HASH PASSWORD TO STORE SECURELY IN MONGODB
+    const hashedPassword = bcrypt.hashSync(password)
+
     const user = User({
       name,
       email,
-      password,
+      password: hashedPassword,
     });
 
     try {
@@ -45,6 +49,7 @@ export async function createUser(req, res) {
       return res.status(500).json({ message: `Server error: ${error.message}`});
     }
      return res.status(201).json({ user });
+
   } catch(error) {
     return res.status(500).json({ message: `Server error: ${error.message}`});
   }
