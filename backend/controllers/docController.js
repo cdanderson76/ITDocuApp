@@ -51,3 +51,29 @@ export async function createDocument(req, res) {
     return res.status(500).json({ message: `Server error: ${error.message}` });
   }
 };
+
+//UPDATE DOCUMENT
+export async function updateDoc(req, res) {
+
+  const { title, description } = req.body;
+  const { id } = req.params;
+
+  let document = '';
+
+  try {
+
+      document = await Doc.findByIdAndUpdate(id, {
+      title,
+      description
+    });
+    
+    return res.status(200).json({ document });
+
+  } catch(error) {
+    console.log(error.message);
+  }
+  
+  if(!document) {
+    return res.status(400).json({ message: `No document found...` });
+  }
+}
