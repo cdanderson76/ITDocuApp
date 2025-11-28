@@ -76,4 +76,26 @@ export async function updateDoc(req, res) {
   if(!document) {
     return res.status(400).json({ message: `No document found...` });
   }
-}
+};
+
+//GET BLOG
+export async function getDocument(req, res) {
+
+  const { id } = req.params;
+
+  let document = '';
+
+  try {
+    
+    document = await Doc.findById(id);
+
+    return res.status(200).json({ document });
+
+  } catch(error) {
+    console.log(error.message);
+  };
+
+  if(!document) {
+    return res.status(400).json({ message: `No document found...` });
+  };
+};
