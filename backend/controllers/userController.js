@@ -48,7 +48,7 @@ export async function createUser(req, res) {
     } catch(error) {
       return res.status(500).json({ message: `Server error: ${error.message}`});
     }
-     return res.status(201).json({ user });
+    return res.status(201).json({ user });
 
   } catch(error) {
     return res.status(500).json({ message: `Server error: ${error.message}`});
