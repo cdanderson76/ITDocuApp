@@ -16,7 +16,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     minLength: 6,
     required: true,
-  }
+  },
+
+  docs: [{ type: mongoose.Types.ObjectId, ref: 'Doc', required: true }],
 }, { timestamps: true });
 
 

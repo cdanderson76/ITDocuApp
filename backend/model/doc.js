@@ -18,7 +18,9 @@ const docSchema = mongoose.Schema({
   },
 
   user: {
-    type: String,
+    type: mongoose.Types.ObjectId,
+    //PROVIDING REFRENCE TO THE USER TO PAIR USER WITH DOCUMENTS
+    ref: 'User',
     required: true
   },
 }, { timestamps: true });

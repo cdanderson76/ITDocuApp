@@ -54,3 +54,30 @@ export async function createUser(req, res) {
     console.log(error.message);
   }
 };
+
+//LOGIN USER
+export async function loginUser(req, res) {
+
+  const { email, password } = req.body;
+
+  let existingUser = '';
+
+  try {
+
+    existingUser = await User.findOne({ email });
+
+    if(!existingUser) {
+      return res.status(400).json({ message: 'Could not find user with this email' });
+    }
+  } catch(error) {
+    console.log(error.message)
+  };
+
+  const isPasswordCorrect = bcrypt.compareSync(existingUser.password, password);
+
+  if(!isPasswordCorrect) {
+    return res.status(400).json({ message: 'Password is incorrect...please try again' });
+  };
+  return res.status(200).json({ message: 'Login successful...' });
+
+}

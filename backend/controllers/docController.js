@@ -1,4 +1,6 @@
 import Doc from '../model/doc.js';
+import User from '../model/user.js';
+import mongoose from 'mongoose';
 
 //GET ALL DOCS
 export async function getAllDocs(req, res) {
@@ -22,17 +24,23 @@ export async function createDocument(req, res) {
 
   const { title, description, image, user } = req.body;
 
-  let existingDocument = ''
+  let existingUser = ''
 
   try {
 
-    existingDocument = await Doc.findOne({ title });
+    existingUser = await User.findById(user);
 
-    if(existingDocument) {
-      return res.status(400).json({ message: `Document ${title} has already been created.  Choose another title...` });
-    };
+  } catch(error) {
+    console.log(error.message);
+  };
 
-    const document = Doc({
+  if(!existingUser) {
+    return res.status(500).json({ message: 'Unable to find user by this ID...' });
+  };
+
+  try {
+
+     const document = new Doc({
       title,
       description,
       image,
@@ -41,15 +49,23 @@ export async function createDocument(req, res) {
 
     try {
 
-      await document.save();
+      const session = await mongoose.startSession();
+        session.startTransaction();
+        await document.save({ session });
+        existingUser.docs.push(document);
+        await existingUser.save({ session });
+        await session.commitTransaction();
 
     } catch(error) {
+      console.log(error.message);
       return res.status(500).json({ message: `Server error: ${error.message}` });
-    };
-    return res.status(201).json({ document });
+    }
+    return res.status(201).json({ document })
+
   } catch(error) {
     console.log(error.message);
-  }
+    return res.status(500).json({ message: `Server error: ${error.message}` });
+  };
 };
 
 //UPDATE DOCUMENT
@@ -100,16 +116,18 @@ export async function getDocument(req, res) {
   };
 };
 
-//DELETE BLOG
+//DELETE DOCUMENT
 export async function deleteDocument(req, res) {
 
   const { id } = req.params;
 
+  let document = '';
+
   try {
 
-    const document =  await Doc.findByIdAndDelete(id);
+    document =  await Doc.findByIdAndDelete(id);
 
-    if( id !== document ) {
+    if(!document) {
       return res.status(400).json({ message: 'Document not found...'});
     };
 
