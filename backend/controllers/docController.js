@@ -13,7 +13,7 @@ export async function getAllDocs(req, res) {
     return res.status(200).json({ docs });
 
   } catch(error) {
-    return res.status(500).json({ message: `Server error: ${error.message}` });
+    console.log(error.message);
   }
 };
 
@@ -48,7 +48,7 @@ export async function createDocument(req, res) {
     };
     return res.status(201).json({ document });
   } catch(error) {
-    return res.status(500).json({ message: `Server error: ${error.message}` });
+    console.log(error.message);
   }
 };
 
@@ -99,3 +99,23 @@ export async function getDocument(req, res) {
     return res.status(400).json({ message: `No document found...` });
   };
 };
+
+//DELETE BLOG
+export async function deleteDocument(req, res) {
+
+  const { id } = req.params;
+
+  try {
+
+    const document =  await Doc.findByIdAndDelete(id);
+
+    if( id !== document ) {
+      return res.status(400).json({ message: 'Document not found...'});
+    };
+
+    return res.status(200).json({ message: 'Document deleted successfully!' });
+
+  } catch(error) {
+    console.log(error.message);
+  }
+}

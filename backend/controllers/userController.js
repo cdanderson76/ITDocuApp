@@ -14,7 +14,7 @@ export async function getAllUsers(req, res) {
     return res.status(200).json({ users })
 
   } catch(error) {
-    return res.status(500).json({ message: `Server error: ${error.message}`});
+    console.log(error.message);
   }
 };
 
@@ -46,11 +46,11 @@ export async function createUser(req, res) {
       await user.save();
 
     } catch(error) {
-      return res.status(500).json({ message: `Server error: ${error.message}`});
+      console.log(error.message);
     }
     return res.status(201).json({ user });
 
   } catch(error) {
-    return res.status(500).json({ message: `Server error: ${error.message}`});
+    console.log(error.message);
   }
 };
